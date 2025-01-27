@@ -162,7 +162,25 @@
         if (!isDragging) return;
         e.preventDefault();
         const x = e.pageX - sliderContainer.offsetLeft;
-        const walk = (x - startX) * 2; // 調整拖曳速度
+        const walk = (x - startX) * 1; // 調整拖曳速度
+        sliderContainer.scrollLeft = scrollLeft - walk;
+    });
+
+     // 觸控拖曳
+     sliderContainer.addEventListener('touchstart', (e) => {
+        isDragging = true;
+        startX = e.touches[0].pageX - sliderContainer.offsetLeft;
+        scrollLeft = sliderContainer.scrollLeft;
+    });
+
+    sliderContainer.addEventListener('touchend', () => {
+        isDragging = false;
+    });
+
+    sliderContainer.addEventListener('touchmove', (e) => {
+        if (!isDragging) return;
+        const x = e.touches[0].pageX - sliderContainer.offsetLeft;
+        const walk = (x - startX) * 1; // 調整觸控滑動速度
         sliderContainer.scrollLeft = scrollLeft - walk;
     });
 
