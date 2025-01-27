@@ -10,34 +10,30 @@
             font-family: 'Noto Serif JP', serif;
             margin: 0;
             padding: 0;
-            background-color: #fdf6e3; /* Soft cream background */
+            background-color: #fdf6e3;
             color: #333;
         }
 
         .slider-container {
+            display: flex; /* 確保滑塊橫向排列 */
             width: 100%;
             max-width: 1800px;
             margin: 30px auto;
             position: relative;
-            overflow: hidden; /* Hides content overflow */
+            overflow: hidden; /* 隱藏多餘內容 */
             border-radius: 12px;
             box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15);
-            background-color: #fefaf3; /* Slightly lighter background */
-            cursor: grab; /* Hand cursor for drag functionality */
+            background-color: #fefaf3;
+            cursor: grab; /* 手型指標 */
         }
 
         .slider-container:active {
-            cursor: grabbing; /* Grabbing cursor during drag */
-        }
-
-        .slider {
-            display: flex;
-            transition: transform 0.5s ease-in-out;
+            cursor: grabbing;
         }
 
         .slide {
-            min-width: 100%;
-            height: 500px; /* Default for mobile */
+            flex: 0 0 100%; /* 每個滑塊佔據 100% 的寬度 */
+            height: 500px; /* 預設高度 */
             display: flex;
             justify-content: center;
             align-items: center;
@@ -47,13 +43,13 @@
 
         @media (min-width: 768px) {
             .slide {
-                height: 700px; /* For tablets and desktops */
+                height: 700px; /* 平板高度 */
             }
         }
 
         @media (min-width: 1024px) {
             .slide {
-                height: 850px; /* For larger desktops */
+                height: 850px; /* 桌面高度 */
             }
         }
 
@@ -68,7 +64,7 @@
         .timeline-button {
             padding: 10px 15px;
             border: none;
-            background-color: #88c0d0; /* Cool pastel blue */
+            background-color: #88c0d0;
             color: #fff;
             font-size: 12px;
             font-weight: 700;
@@ -79,12 +75,12 @@
         }
 
         .timeline-button:hover {
-            background-color: #81a1c1; /* Slightly darker blue */
+            background-color: #81a1c1;
             transform: translateY(-2px);
         }
 
         .timeline-button.active {
-            background-color: #5e81ac; /* Deep pastel blue */
+            background-color: #5e81ac;
         }
 
         @media (min-width: 768px) {
@@ -111,18 +107,16 @@
 <body>
 
 <div class="slider-container">
-    <div class="slider">
-        <div class="slide" style="background-image: url('1.webp');"></div>
-        <div class="slide" style="background-image: url('2.webp');"></div>
-        <div class="slide" style="background-image: url('3.webp');"></div>
-        <div class="slide" style="background-image: url('4.webp');"></div>
-        <div class="slide" style="background-image: url('5.webp');"></div>
-        <div class="slide" style="background-image: url('6.webp');"></div>
-        <div class="slide" style="background-image: url('7.webp');"></div>
-        <div class="slide" style="background-image: url('8.webp');"></div>
-        <div class="slide" style="background-image: url('9.webp');"></div>
-        <div class="slide" style="background-image: url('10.webp');"></div>
-    </div>
+    <div class="slide" style="background-image: url('1.webp');"></div>
+    <div class="slide" style="background-image: url('2.webp');"></div>
+    <div class="slide" style="background-image: url('3.webp');"></div>
+    <div class="slide" style="background-image: url('4.webp');"></div>
+    <div class="slide" style="background-image: url('5.webp');"></div>
+    <div class="slide" style="background-image: url('6.webp');"></div>
+    <div class="slide" style="background-image: url('7.webp');"></div>
+    <div class="slide" style="background-image: url('8.webp');"></div>
+    <div class="slide" style="background-image: url('9.webp');"></div>
+    <div class="slide" style="background-image: url('10.webp');"></div>
 </div>
 
 <div class="timeline">
@@ -144,18 +138,16 @@
 
 <script>
     const sliderContainer = document.querySelector('.slider-container');
-    const slider = document.querySelector('.slider');
     const buttons = document.querySelectorAll('.timeline-button');
-
     let isDragging = false;
     let startX;
     let scrollLeft;
 
-    // 拖曳功能
+    // 滑鼠拖曳功能
     sliderContainer.addEventListener('mousedown', (e) => {
         isDragging = true;
         startX = e.pageX - sliderContainer.offsetLeft;
-        scrollLeft = slider.scrollLeft;
+        scrollLeft = sliderContainer.scrollLeft;
     });
 
     sliderContainer.addEventListener('mouseleave', () => {
@@ -170,31 +162,17 @@
         if (!isDragging) return;
         e.preventDefault();
         const x = e.pageX - sliderContainer.offsetLeft;
-        const walk = (x - startX) * 1.5; // 控制滑動速度
-        slider.scrollLeft = scrollLeft - walk;
+        const walk = (x - startX) * 2; // 調整拖曳速度
+        sliderContainer.scrollLeft = scrollLeft - walk;
     });
 
-    // 支援觸控裝置
-    sliderContainer.addEventListener('touchstart', (e) => {
-        isDragging = true;
-        startX = e.touches[0].pageX - sliderContainer.offsetLeft;
-        scrollLeft = slider.scrollLeft;
-    });
-
-    sliderContainer.addEventListener('touchend', () => {
-        isDragging = false;
-    });
-
-    sliderContainer.addEventListener('touchmove', (e) => {
-        if (!isDragging) return;
-        const x = e.touches[0].pageX - sliderContainer.offsetLeft;
-        const walk = (x - startX) * 1.5; // 控制滑動速度
-        slider.scrollLeft = scrollLeft - walk;
-    });
-
-    // 按鈕點擊跳轉
+    // 按鈕點擊切換滑塊
     function moveToSlide(index) {
-        slider.style.transform = `translateX(-${index * 100}%)`;
+        const slideWidth = sliderContainer.offsetWidth;
+        sliderContainer.scrollTo({
+            left: index * slideWidth,
+            behavior: 'smooth',
+        });
         buttons.forEach((btn) => btn.classList.remove('active'));
         buttons[index].classList.add('active');
     }
