@@ -20,11 +20,17 @@
             max-width: 1800px;
             margin: 30px auto;
             position: relative;
-            overflow: hidden; /* 隱藏多餘內容 */
+            overflow-x: scroll; /* 允許水平滾動 */
+            overflow-y: hidden; /* 隱藏垂直滾動 */
+            scrollbar-width: none; /* Firefox 隱藏滾動條 */
             border-radius: 12px;
             box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15);
             background-color: #fefaf3;
             cursor: grab; /* 手型指標 */
+        }
+
+        .slider-container::-webkit-scrollbar {
+            display: none; /* 隱藏 Safari 和 Chrome 的滾動條 */
         }
 
         .slider-container:active {
@@ -171,6 +177,7 @@
         isDragging = true;
         startX = e.touches[0].pageX - sliderContainer.offsetLeft;
         scrollLeft = sliderContainer.scrollLeft;
+        e.preventDefault(); // 阻止預設行為（例如頁面滾動）
     });
 
     sliderContainer.addEventListener('touchend', () => {
@@ -182,6 +189,7 @@
         const x = e.touches[0].pageX - sliderContainer.offsetLeft;
         const walk = (x - startX) * 1; // 調整觸控滑動速度
         sliderContainer.scrollLeft = scrollLeft - walk;
+        e.preventDefault(); // 阻止預設行為（例如頁面滾動）
     });
 
     // 按鈕點擊切換滑塊
