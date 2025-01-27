@@ -19,10 +19,15 @@
             max-width: 1800px;
             margin: 30px auto;
             position: relative;
-            overflow: hidden;
+            overflow: hidden; /* Hides content overflow */
             border-radius: 12px;
             box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15);
             background-color: #fefaf3; /* Slightly lighter background */
+            cursor: grab; /* Hand cursor for drag functionality */
+        }
+
+        .slider-container:active {
+            cursor: grabbing; /* Grabbing cursor during drag */
         }
 
         .slider {
@@ -138,16 +143,63 @@
 </footer>
 
 <script>
+    const sliderContainer = document.querySelector('.slider-container');
     const slider = document.querySelector('.slider');
     const buttons = document.querySelectorAll('.timeline-button');
 
+    let isDragging = false;
+    let startX;
+    let scrollLeft;
+
+    // 拖曳功能
+    sliderContainer.addEventListener('mousedown', (e) => {
+        isDragging = true;
+        startX = e.pageX - sliderContainer.offsetLeft;
+        scrollLeft = slider.scrollLeft;
+    });
+
+    sliderContainer.addEventListener('mouseleave', () => {
+        isDragging = false;
+    });
+
+    sliderContainer.addEventListener('mouseup', () => {
+        isDragging = false;
+    });
+
+    sliderContainer.addEventListener('mousemove', (e) => {
+        if (!isDragging) return;
+        e.preventDefault();
+        const x = e.pageX - sliderContainer.offsetLeft;
+        const walk = (x - startX) * 1.5; // 控制滑動速度
+        slider.scrollLeft = scrollLeft - walk;
+    });
+
+    // 支援觸控裝置
+    sliderContainer.addEventListener('touchstart', (e) => {
+        isDragging = true;
+        startX = e.touches[0].pageX - sliderContainer.offsetLeft;
+        scrollLeft = slider.scrollLeft;
+    });
+
+    sliderContainer.addEventListener('touchend', () => {
+        isDragging = false;
+    });
+
+    sliderContainer.addEventListener('touchmove', (e) => {
+        if (!isDragging) return;
+        const x = e.touches[0].pageX - sliderContainer.offsetLeft;
+        const walk = (x - startX) * 1.5; // 控制滑動速度
+        slider.scrollLeft = scrollLeft - walk;
+    });
+
+    // 按鈕點擊跳轉
     function moveToSlide(index) {
         slider.style.transform = `translateX(-${index * 100}%)`;
-        buttons.forEach(btn => btn.classList.remove('active'));
+        buttons.forEach((btn) => btn.classList.remove('active'));
         buttons[index].classList.add('active');
     }
 
-    // Set initial state
+    // 初始化按鈕狀態
     moveToSlide(0);
 </script>
 
